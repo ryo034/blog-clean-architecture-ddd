@@ -7,4 +7,12 @@ export class PostController {
   findById(id: string): Promise<PostResponse> {
     return this.useCase.findById(id)
   }
+
+  create(title: string, content: string, status: string): Promise<PostResponse> {
+    // validation
+    if (status === "hoge") {
+      throw new Error("status is invalid")
+    }
+    return this.useCase.create(title, content, status)
+  }
 }

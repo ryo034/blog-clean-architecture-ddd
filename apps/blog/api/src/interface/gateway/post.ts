@@ -7,6 +7,10 @@ export class PostGateway implements PostRepository {
 
   async findById(id: string): Promise<Post> {
     const res = await this.postDriver.findById(id)
-    return Post.create({ id: res.id, title: res.title, content: res.content })
+    return Post.create({ id: res.id, title: res.title, content: res.content, status: res.status })
+  }
+
+  async create(post: Post): Promise<void> {
+    return this.postDriver.create(post) //NULL
   }
 }

@@ -3,4 +3,5 @@ import type { PostResponse } from "../../infrastructure/response/post"
 
 export interface PostOutputPort {
   findById(post: Post): PostResponse
+  create(post: Post): PostResponse
 }

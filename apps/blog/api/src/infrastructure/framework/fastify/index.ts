@@ -35,8 +35,38 @@ interface GetPostHandler {
 }
 
 server.get<GetPostHandler>("/posts/:id", async (request, _reply) => {
-  const post = await injector.controller.post.findById(request.params.id)
-  return { post }
+  const postDTO = await injector.controller.post.findById(request.params.id)
+  return {
+    post: {
+      id: postDTO.id,
+      title: postDTO.title,
+      content: postDTO.content
+    }
+  }
+})
+
+interface CreatePostHandler {
+  Body: {
+    title: string
+    content: string
+    status: string
+  }
+  Reply: {
+    post: PostResponse
+  }
+}
+
+// http://localhost:8080/posts POST {"title":"ほげ","content":"内容"}
+
+server.post<CreatePostHandler>("/posts", async (request, _reply) => {
+  const postDTO = await injector.controller.post.create(request.body.title, request.body.content, request.body.status)
+  return {
+    post: {
+      id: postDTO.id,
+      title: postDTO.title,
+      content: postDTO.content
+    }
+  }
 })
 
 const start = async () => {
