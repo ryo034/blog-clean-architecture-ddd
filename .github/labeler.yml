@@ -1,0 +1,39 @@
+system:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/blog/**/*"
+
+client:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/blog/client/**/*"
+
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/blog/api/**/*"
+
+test:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/blog/test/**/*"
+
+workflow:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**/*"
+
+container:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "container/**/*"
+
+e2e:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "apps/blog/test/e2e/**/*"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"

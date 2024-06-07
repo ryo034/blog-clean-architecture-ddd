@@ -1,0 +1,50 @@
+name: __ System Scheduled Snyk Security Scan
+
+# description
+# Snykを使用してapps/blog配下のパッケージの脆弱性のスキャンを行います
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 19 * * 1-5' # 毎週月曜日から金曜日の日本時間午前4時に実行
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Snyk setup
+      id: snyk
+      uses: snyk/actions/setup@master
+
+    - name: Snyk version
+      run: snyk --version
+
+    - name: Auth Snyk
+      run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+    - name: Enable corepack for pnpm
+      run: corepack enable pnpm
+
+    - name: Get pnpm store directory
+      id: pnpm-store
+      shell: bash
+      run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - uses: actions/cache@v4
+      name: Setup pnpm cache
+      with:
+        path: ${{ steps.pnpm-store.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+
+    - name: Snyk test for API
+      run: snyk test --all-projects
+      working-directory: apps/blog

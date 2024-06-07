@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # - package-ecosystem: docker
+  #   directory: "/apps/blog/api"
+  #   schedule:
+  #     interval: "daily"
+  #     time: "07:00"
+  #     timezone: "Asia/Tokyo"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "07:00"
+      timezone: "Asia/Tokyo"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/blog/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 1
+    groups:
+      patch:
+        update-types:
+          - "patch"
+      minor-major:
+        update-types:
+          - "minor"
+          - "major"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/blog/client"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 1
+    groups:
+      patch:
+        update-types:
+          - "patch"
+      minor-major:
+        update-types:
+          - "minor"
+          - "major"

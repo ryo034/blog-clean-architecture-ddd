@@ -1,0 +1,80 @@
+name: __ Format markdown
+
+# description
+# 全ディレクトリのmarkdownファイルが変更された際にフォーマットします
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - .github/workflows/formatter-markdown.yml
+      - '!**/generated/**'
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  node-version:
+    uses: ./.github/workflows/__node-version.yml
+
+  format:
+    needs: [ node-version ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ needs.node-version.outputs.node-version }}
+
+      - name: Enable corepack for pnpm
+        run: corepack enable pnpm
+
+      - name: Get pnpm store directory
+        id: pnpm-store
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-store.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: format markdown
+        run: pnpm run format-markdown
+
+      - name: Check diff
+        id: diff
+        shell: bash
+        continue-on-error: true
+        run: |
+          git add -N .
+          git diff --name-only --exit-code
+
+      - name: Commit changes
+        if: steps.diff.outcome == 'failure'
+        shell: bash
+        run: |
+          set -x
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "📃 format markdown file by github-actions"
+
+      - name: Push changes
+        if: steps.diff.outcome == 'failure'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}

@@ -1,0 +1,38 @@
+name: __ Dependabot automation
+
+# description
+# パッチバージョンアップの場合は自動でマージする
+# マイナーバージョンアップの場合は開発依存の場合のみ自動でマージする
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+  contents: write
+  issues: write
+  repository-projects: write
+
+jobs:
+  dependabot-auto-merge:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v2.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Approve & enable auto-merge for Dependabot PR
+        if: steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || (steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor' && steps.dependabot-metadata.outputs.dependency-type == 'direct:development')
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr edit "$PR_URL" -t "(auto merged) $PR_TITLE"
+          gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
