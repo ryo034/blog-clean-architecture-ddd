@@ -18,4 +18,9 @@ export class PostDriver {
     //データベースになんか作る
     throw new Error(`PostDriver create not implemented`)
   }
+
+  async update(post: Post): Promise<void> {
+    //データベースになんか更新
+    throw new Error(`PostDriver update not implemented`)
+  }
 }
