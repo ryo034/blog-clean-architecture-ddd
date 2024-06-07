@@ -1,0 +1,3 @@
+packages:
+  - "apps/blog/api/**"
+  # - "apps/blog/client/**"

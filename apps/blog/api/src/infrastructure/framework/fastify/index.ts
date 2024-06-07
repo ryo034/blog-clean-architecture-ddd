@@ -1,15 +1,17 @@
-import fastify, { RouteShorthandOptions } from 'fastify'
+import fastify, { type RouteShorthandOptions } from "fastify"
+import { Injector, controllerInjector } from "../../injector/injector"
+import type { PostResponse } from "../../response/post"
 
 const server = fastify()
 
-const opts: RouteShorthandOptions = {
+const pingOpts: RouteShorthandOptions = {
   schema: {
     response: {
       200: {
-        type: 'object',
+        type: "object",
         properties: {
           pong: {
-            type: 'string'
+            type: "string"
           }
         }
       }
@@ -17,17 +19,31 @@ const opts: RouteShorthandOptions = {
   }
 }
 
-server.get('/ping', opts, async (request, reply) => {
-  return { pong: 'it worked!' }
+const injector = new Injector(controllerInjector)
+
+server.get("/ping", pingOpts, () => {
+  return { pong: "it worked!" }
+})
+
+interface GetPostHandler {
+  Params: {
+    id: string
+  }
+  Reply: {
+    post: PostResponse
+  }
+}
+
+server.get<GetPostHandler>("/posts/:id", async (request, _reply) => {
+  const post = await injector.controller.post.findById(request.params.id)
+  return { post }
 })
 
 const start = async () => {
   try {
     await server.listen({ port: 8080 })
-
-    const address = server.server.address()
-    const port = typeof address === 'string' ? address : address?.port
-
+    // const address = server.server.address()
+    // const _port = typeof address === "string" ? address : address?.port
   } catch (err) {
     server.log.error(err)
     process.exit(1)
