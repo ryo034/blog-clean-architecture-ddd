@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index",
-    "dev": "ts-node-dev index"
+    "dev": "ts-node-dev ./src/infrastructure/framework/fastify/index"
   },
   "keywords": [],
   "author": "",
