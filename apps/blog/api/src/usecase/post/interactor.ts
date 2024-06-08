@@ -10,6 +10,11 @@ export class PostInteractor implements PostInputPort {
     private readonly outputPort: PostOutputPort
   ) {}
 
+  async update(post: Post): Promise<PostResponse> {
+    await this.repository.update(post)
+    return this.outputPort.update(post)
+  }
+
   async findById(id: string): Promise<PostResponse> {
     const post = await this.repository.findById(id)
     return this.outputPort.findById(post)

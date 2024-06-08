@@ -4,6 +4,9 @@ import type { PostDriver } from "../../infrastructure/driver/post"
 
 export class PostGateway implements PostRepository {
   constructor(private readonly postDriver: PostDriver) {}
+  async update(post: Post): Promise<void> {
+    throw new Error("Method not implemented.")
+  }
 
   async findById(id: string): Promise<Post> {
     const res = await this.postDriver.findById(id)

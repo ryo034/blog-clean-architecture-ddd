@@ -1,3 +1,4 @@
+//Postクラスのコンストラクタに引き渡される引数の型
 interface Props {
   id: string
   title: string
@@ -18,6 +19,7 @@ export class Post {
     this.status = props.status
   }
 
+  //引き渡されたidプロパティ
   static create(v: Props): Post {
     return new Post(v)
   }
@@ -31,6 +33,14 @@ export class Post {
       status: v.status
     })
   }
+
+  //id以外を更新する
+  update(v: Omit<Props, "id">): void {
+    this.title = v.title;
+    this.content = v.content;
+    this.status = v.status;
+  }
+
 
   getId(): string {
     return this.id

@@ -1,5 +1,6 @@
 import type { PostResponse } from "../../infrastructure/response/post"
 import type { PostInputPort } from "../../usecase/post/input"
+import { Post } from "../../entity/domain/post/post"
 
 export class PostController {
   constructor(private readonly useCase: PostInputPort) {}
@@ -15,4 +16,14 @@ export class PostController {
     }
     return this.useCase.create(title, content, status)
   }
+
+  update(post: Post): Promise<PostResponse> {
+    // id確認
+    if (post.getId() === "hoge") {  // インスタンスのidを参照
+      return this.useCase.create(post.getTitle(), post.getContent(), post.getStatus()); // 新規作成
+    }
+    return this.useCase.update(post); // 内容更新
+  }
 }
+
+  

@@ -25,6 +25,7 @@ server.get("/ping", pingOpts, () => {
   return { pong: "it worked!" }
 })
 
+//ここからGet
 interface GetPostHandler {
   Params: {
     id: string
@@ -45,6 +46,7 @@ server.get<GetPostHandler>("/posts/:id", async (request, _reply) => {
   }
 })
 
+//ここからPost
 interface CreatePostHandler {
   Body: {
     title: string
@@ -68,6 +70,32 @@ server.post<CreatePostHandler>("/posts", async (request, _reply) => {
     }
   }
 })
+
+//ここからUpdate
+interface UpdatePostHandler {
+  Body: {
+    id:string
+    title: string
+    content: string
+    status: string
+  }
+  Reply: {
+    post: PostResponse
+  }
+}
+
+// http://localhost:8080/posts PUT {"id":"qfdfqfjnasiufdlausbfdajs","title":"ほげ","content":"内容"}
+server.post<UpdatePostHandler>("/posts/:id", async (request, _reply) => {
+  const postDTO = await injector.controller.post.create(request.body.title, request.body.content, request.body.status)
+  return {
+    post: {
+      id: postDTO.id,
+      title: postDTO.title,
+      content: postDTO.content
+    }
+  }
+})
+
 
 const start = async () => {
   try {
