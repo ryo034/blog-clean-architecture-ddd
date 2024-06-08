@@ -45,28 +45,22 @@ server.get<GetPostHandler>("/posts/:id", async (request, _reply) => {
   }
 })
 
+export interface CreatePostResponse {
+  post: PostResponse
+}
 interface CreatePostHandler {
   Body: {
     title: string
     content: string
     status: string
   }
-  Reply: {
-    post: PostResponse
-  }
+  Reply: CreatePostResponse
 }
 
 // http://localhost:8080/posts POST {"title":"ほげ","content":"内容"}
 
 server.post<CreatePostHandler>("/posts", async (request, _reply) => {
-  const postDTO = await injector.controller.post.create(request.body.title, request.body.content, request.body.status)
-  return {
-    post: {
-      id: postDTO.id,
-      title: postDTO.title,
-      content: postDTO.content
-    }
-  }
+  return await injector.controller.post.create(request.body.title, request.body.content, request.body.status)
 })
 
 const start = async () => {
