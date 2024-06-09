@@ -35,13 +35,24 @@ export class Post {
   }
 
   //id以外を更新する
-  update(v: Omit<Props, "id">): void {
-    this.title = v.title;
-    this.content = v.content;
-    this.status = v.status;
+  // update(v: Omit<Props, "id">): void {
+  //   this.title = v.title;
+  //   this.content = v.content;
+  //   this.status = v.status;
+  // }
+  //新しいモデルを作り返すよう(イミュータブル)にする
+  //updateは id以外のプロパティを新しいインスタンスで返す
+  update(v: Omit<Props, "id">): Post {
+    const updated = {
+      id:this.id,
+      title:v.title,
+      content:v.content,
+      status:v.status,
+    }
+    return new Post(updated)
   }
 
-
+  
   getId(): string {
     return this.id
   }

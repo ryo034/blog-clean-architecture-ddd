@@ -68,29 +68,32 @@ server.post<CreatePostHandler>("/posts", async (request, _reply) => {
 })
 
 //ここからUpdate
+export interface UpdatePostResponse {
+  post: PostResponse
+}
+
 interface UpdatePostHandler {
   Body: {
-    // id:string
-    // title: string
-    // content: string
-    // status: string
-    post: Post
+    //id:string
+    title: string
+    content: string
+    status: string
+    //post: Post
+  }
+  //URLのパラーメータでid指定してるからbodyには不要。Paramsにidの指定が必要
+  Params: {
+    id: string
   }
   Reply: {
-    post: PostResponse
+    post: UpdatePostResponse
   }
 }
 
 // http://localhost:8080/posts PUT {"id":"qfdfqfjnasiufdlausbfdajs","title":"ほげ","content":"内容"}
 server.post<UpdatePostHandler>("/posts/:id", async (request, _reply) => {
-  const postDTO = await injector.controller.post.update(request.body.post)
-  return {
-    post: {
-      id: postDTO.id,
-      title: postDTO.title,
-      content: postDTO.content
-    }
-  }
+  const updatedPost = await injector.controller.post.update(request.params.id,request.body.title,request.body.content,request.body.status);
+  //server.post メソッドの第二引数に渡すハンドラー関数が、RouteHandlerMethod 型である必要があり型を明記する必要がある
+  return {post:updatedPost};
 })
 
 
