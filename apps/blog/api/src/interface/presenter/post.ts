@@ -12,6 +12,10 @@ export class PostPresenter implements PostOutputPort {
     }
   }
 
+  update(post: Post): PostResponse {
+    return this.adapt(post)
+  }
+
   findById(post: Post): PostResponse {
     return this.adapt(post)
   }
